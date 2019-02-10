@@ -1,5 +1,5 @@
 from datetime import datetime
-import sys, subprocess
+import sys, subprocess, math
 import networkx as nx
 import matplotlib.pyplot as plt
 startTime = datetime.now()
@@ -31,7 +31,7 @@ class Node(object):
 
 class Graph(object):
     def __init__(self):
-        self.path = []
+        self.path = dict()
         self.graph_size = 0
         self.found = False
 
@@ -46,7 +46,7 @@ class Graph(object):
         """
         starting_word = str(starting_node.data)
         ending_word = str(ending_node.data)
-        self.path.append((starting_node.id,starting_node.data))
+        self.path[starting_node.id] = starting_node.data
 
         if starting_node.id == 0 and not self.found:
             starting_node.visited = False
@@ -89,8 +89,11 @@ class Graph(object):
 
 # This test implements the word ladder problem
 def main():
-    print()
+
+    # TIMING TIME
     startTime = datetime.now()
+
+    # DATA TIME
     ourdictpath = './words2.txt'
     wordlist = dict()
     word1 = 'fool'
@@ -110,13 +113,39 @@ def main():
     print(str(datetime.now() - startTime))
     print('Total Nodes made:' + str(g.graph_size))
     print('Dictionary Size / Words Used = ' + str(len(g.path)/len(wordlist)))
-    print(g.path)
 
-    ourplot = nx.Graph()
-    ourplot = nx.circular_layout(g.path)
-    ourplot.add_nodes_from(g.path)
-    nx.draw_circular(ourplot)
 
+    # GRAPHING TIME
+    # create the graph object
+    ourplot = nx.DiGraph()
+    edges = []
+    edgedata = list(g.path.values())
+    for index, node in enumerate(edgedata):
+        try:
+            edges.append(tuple((edgedata[index], edgedata[index+1])))
+        except IndexError:
+            print(edges)
+            continue
+
+    # nodedata = g.path.values()
+    # This command is powerful. takes [('fool', 'sool'),('sool', 'siol'),(siol, sial)...] and makes our graph data
+    ourplot.add_edges_from(edges)
+
+    distinquished_nodes = {word1:200,
+               word2:200}
+
+    color_values = [distinquished_nodes.get(node, 100) for node in ourplot.nodes()]
+
+    green_edges = [edges[0], edges[-1]]
+
+
+    pos = nx.spring_layout(ourplot, k=.01)
+    nx.draw_networkx_nodes(ourplot, pos, node_color=color_values, node_size=len(word1)*125)
+    nx.draw_networkx_labels(ourplot, pos)
+    nx.draw_networkx_edges(ourplot, pos, edgelist=edges, edge_color='b', arrows=True)
+    nx.draw_networkx_edges(ourplot, pos, edgelist=green_edges, edge_color='g', arrows=True)
+    plt.show()
+    plt.savefig('out.pdf')
 
 
 if __name__ == '__main__':
