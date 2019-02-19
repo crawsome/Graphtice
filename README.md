@@ -12,10 +12,12 @@ I'm currently still working on this project to make a more optimal way of graphi
 I made this because I was learning about fundamentals in my free time:
 * Traversal of nodes
 * Graphing an attractive representation of the data
-* Implementing any solution to the "Wordladder" problem.
+* Dynamically adding and removing from a graph
+* Implementing some solutions to the "Wordladder" problem.
 * Exporting a graph to a PDF or image
 
-Future updates will improve all features :)
+Please submit issues with wordpaths that it cannot find. 
+More tests to come. This upload seems to find a really fast path for fool->sage at least. Need more test cases!
 
 ### Note:
 Script needs write access to directory to save the PDF and the PNG of the graph, and read access to read the dictionary file.
